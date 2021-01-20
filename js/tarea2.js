@@ -2,8 +2,8 @@
 graf = d3.select('#graf')
 //Calcula el ancho de la ventana cortando el px con el slice del valor ejemplo 1000px > 1000
 ancho_total = graf.style('width').slice(0, -2)
-//Calcula el alto  con una relacion de 9:16 basado en el ancho 
-alto_total = ancho_total * 7 / 16
+//Calcula el alto  con una relacion de 6:16 basado en el ancho 
+alto_total = ancho_total * 6 / 16
 
 // Configuracion el ancho y Largo del graf 
 graf.style('width', `${ ancho_total }px`)
@@ -104,7 +104,8 @@ function render(data)
             return '#000000'
           }  
         })         
-      
+        /*****/
+
   // Borrar barras
   barras.exit()
         .transition()
@@ -114,7 +115,7 @@ function render(data)
         .style('fill', '#000000')
         .remove()
 
-  //Redibujar Ejes
+  /***** Redibujar Ejes *****/
   yAxisCall = d3.axisLeft(y)
                 .ticks(3)
 
@@ -180,7 +181,9 @@ function render(data)
             .attr('y', '-5px')
             .attr('text-anchor', 'end')
             .attr('transform', 'rotate(-90)')
+  /*****/
 
+  /****** CAMBIA EL TITULO SEGUN LA METRICA Y AGREGA LOS DATOS RECORDS  */
   titulo.transition()
         .duration(2000)
         .attr('x', `${ancho / 2}px`)
@@ -194,11 +197,11 @@ function render(data)
               if(metrica=='TotalDeaths')
                 varTexto='Muertes Acumuladas: '+maxy
               if(metrica=='NewDeaths')
-                varTexto='Muertes Diarias - Record: '+maxy
+                varTexto='Muertes Diarias - Record: '+maxy+' Muertes en un dia'
               if(metrica=='TotalCases')
                 varTexto='Casos Acumulados: '+maxy
               if(metrica=='NewCases')
-                varTexto='Casos Diarios - Record: '+maxy                                
+                varTexto='Casos Diarios - Record: '+maxy+' Muertes en un dia'                                
               return varTexto
            })
         .attr('class', 'titulo-grafica') 
