@@ -70,7 +70,7 @@ function render(data)
   barras.enter()
         /***** Crea rectangulo como tiene transicion empieza en 0 para ir creciendo */
         .append('rect') // Creo Rectangulo
-        .style('width', '0px')
+        .style('width', d => `${x.bandwidth()}px`)
         .style('height', '0px')
         .style('y', `${y(0)}px`) 
         .style('fill', '#000')
@@ -80,8 +80,7 @@ function render(data)
         /***** Hacemos trancision para animacion */
         .merge(barras)
         .transition()
-        .ease(d3.easeElastic)
-        .duration(2000)
+        .duration(3000)
         /*****/
 
         /***** Creamos el rectangulo final de la transicion con los datos reales  */
