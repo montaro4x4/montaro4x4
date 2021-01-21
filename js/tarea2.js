@@ -200,7 +200,7 @@ function render(data)
               if(metrica=='TotalCases')
                 varTexto='Casos Acumulados: '+maxy
               if(metrica=='NewCases')
-                varTexto='Casos Diarios - Record: '+maxy+' Muertes en un dia'                                
+                varTexto='Casos Diarios - Record: '+maxy+' Casos en un dia'                                
               return varTexto
            })
         .attr('class', 'titulo-grafica') 
