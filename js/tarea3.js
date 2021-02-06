@@ -62,6 +62,8 @@ var sliderMin
 var parseTime = d3.timeParse("%m/%d/%y")
 var filterDate= parseTime("1/21/20")
 
+var color = d3.scaleOrdinal(d3.schemeCategory10)
+//.range(["orange", "steelblue"])
 
 //Declara metrica Inicial 
 slider     = d3.select('#slider');
@@ -76,11 +78,12 @@ function render(data)
         .attr('x', function(d) { return x(0);}) 
         .attr('width', function(d) {return x(d.TotalDeaths); })
         .attr('height', y.bandwidth())
-        .attr('fill', '#5499C7')
+        .attr('fill', function(d) {return color(d.country);})
   barras.transition()
         .duration(500)
         .style('y', function(d) { return y(d.country); })
         .style('width', function(d) {return x(d.TotalDeaths); } )  
+        .attr('fill', function(d) {return color(d.country);})
   barras.exit().remove()
        
   barrasCountry = g.selectAll('text.label').data(data, d => d.country)
@@ -93,7 +96,7 @@ function render(data)
                .style('fill', '#000000')
                .html(d => d.country);       
   barrasCountry.transition()
-               .duration(500)
+               .duration(20)
                .attr('x', function(d) {return x(d.TotalDeaths)-8;})
                .attr('y', function(d) {return y(d.country)+20;})  
   barrasCountry.raise()                
@@ -165,6 +168,8 @@ d3.csv('dataset/covid19World.csv')
     timeScale = d3.scaleTime()      
       .domain([sliderMin,sliderMax])
       .range([0,Difference_In_Days]); 
+
+    color.domain(d3.map(data, d => d.country))
     //console.log("timeScale_Min:"+timeScale(sliderMin))    
     //console.log("timeScale_filterDate:"+timeScale(filterDate))  
     //console.log("timeScale_Max:"+timeScale(sliderMax))  
