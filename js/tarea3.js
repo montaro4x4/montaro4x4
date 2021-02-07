@@ -28,7 +28,7 @@ g = svg.append('g')
        .attr('height', alto + 'px')
 
 // Declarar escalador lineal como variable global para re dibujar segun estadistica seleccionada       
-x = d3.scaleLinear().range([0,ancho])
+x = d3.scaleLinear().range([0,ancho-70])
 
 // Declarar escalador para bandas como variable global para re dibujar segun estadistica seleccionada configurado a -0.3 de ancho para que sea mas grafica de area 
 y = d3.scaleBand()
@@ -43,15 +43,30 @@ xAxisGroup = g.append('g')
               .attr('class', 'eje')
               
 yAxisGroup = g.append('g')
-              .attr('class', 'eje')       
+              .attr('class', 'ejeY')     
 
-//Declaracion de Titulo Inicial               
-titulo = g.append('text')
-          .attr('x', `${ancho / 2}px`)
-          .attr('y', '-5px')
-          .attr('text-anchor', 'middle')
-          .text('')
+/******** TITULOS Y ETIQUETAS *************/            
+titulo = g.append('text').attr('x', `${ancho / 2}px`).attr('y', '-5px').attr('text-anchor', 'middle').text('Muertes Acumuladas: ')
 
+g.append('text').attr('x', `-30 px`).attr('y', '30px').attr('text-anchor', 'middle').text('1')    
+g.append('text').attr('x', `-30 px`).attr('y', '65px').attr('text-anchor', 'middle').text('2')    
+g.append('text').attr('x', `-30 px`).attr('y', '100px').attr('text-anchor', 'middle').text('3')    
+g.append('text').attr('x', `-30 px`).attr('y', '135px').attr('text-anchor', 'middle').text('4')    
+g.append('text').attr('x', `-30 px`).attr('y', '170px').attr('text-anchor', 'middle').text('5')    
+g.append('text').attr('x', `-30 px`).attr('y', '205px').attr('text-anchor', 'middle').text('6')    
+g.append('text').attr('x', `-30 px`).attr('y', '240px').attr('text-anchor', 'middle').text('7')    
+g.append('text').attr('x', `-30 px`).attr('y', '275px').attr('text-anchor', 'middle').text('8')    
+g.append('text').attr('x', `-30 px`).attr('y', '310px').attr('text-anchor', 'middle').text('9')    
+g.append('text').attr('x', `-30 px`).attr('y', '345px').attr('text-anchor', 'middle').text('10')    
+g.append('text').attr('x', `-30 px`).attr('y', '380px').attr('text-anchor', 'middle').text('11')    
+g.append('text').attr('x', `-30 px`).attr('y', '415px').attr('text-anchor', 'middle').text('12')    
+g.append('text').attr('x', `-30 px`).attr('y', '450px').attr('text-anchor', 'middle').text('13')    
+g.append('text').attr('x', `-30 px`).attr('y', '485px').attr('text-anchor', 'middle').text('14')    
+g.append('text').attr('x', `-30 px`).attr('y', '520px').attr('text-anchor', 'middle').text('15')    
+
+fecha = g.append('text').attr('x', `${ancho -(ancho / 3)}px`).attr('y',`${alto - 40}px`).attr('text-anchor', 'start').attr('fill','#cccccc').attr('font-size','60').text('')
+
+          
 //Declaracion de Variables Globales           
 dataArray = []
 valoresTickX=[]
@@ -61,9 +76,14 @@ var sliderMax
 var sliderMin
 var parseTime = d3.timeParse("%m/%d/%y")
 var filterDate= parseTime("1/21/20")
-
 var color = d3.scaleOrdinal(d3.schemeCategory10)
-//.range(["orange", "steelblue"])
+var interval
+var corriendo=true
+var velocidad=350
+var velocidadTransicion=500
+var TextoFecha
+var formatTime = d3.timeFormat("%d-%b-%y");
+botonPausa = d3.select('#pausa')
 
 //Declara metrica Inicial 
 slider     = d3.select('#slider');
@@ -71,51 +91,75 @@ slider     = d3.select('#slider');
 /***** Funcion para hacer el render de la grafica *****/
 function render(data) 
 {
-  barras = g.selectAll('rect').data(data, d => d.TotalDeaths)
+  barras = g.selectAll('rect').data(data, d => d.country)
   barras.enter()
         .append('rect')
-        .attr('y', function(d) { return y(d.country); }) 
-        .attr('x', function(d) { return x(0);}) 
-        .attr('width', function(d) {return x(d.TotalDeaths); })
-        .attr('height', y.bandwidth())
-        .attr('fill', function(d) {return color(d.country);})
-  barras.transition()
-        .duration(500)
-        .style('y', function(d) { return y(d.country); })
-        .style('width', function(d) {return x(d.TotalDeaths); } )  
-        .attr('fill', function(d) {return color(d.country);})
+          .attr('y', function(d) { return y(d.country); }) 
+          .attr('x', function(d) { return x(0);}) 
+          .attr('width', function(d) {return x(d.TotalDeaths); })
+          .attr('height', y.bandwidth())
+          .attr('fill', function(d) {return color(d.country);})
+        .merge(barras)
+          .transition().duration(velocidadTransicion)
+          .attr('y', function(d) { return y(d.country); })
+          .attr('width', function(d) {return x(d.TotalDeaths); } )  
+          .attr('fill', function(d) {return color(d.country);})        
+
+
+  //barras.transition().duration(500)
+    //    .style('y', function(d) { return y(d.country); })
+      //  .style('width', function(d) {return x(d.TotalDeaths); } )  
+       // .attr('fill', function(d) {return color(d.country);})
   barras.exit().remove()
        
   barrasCountry = g.selectAll('text.label').data(data, d => d.country)
   barrasCountry.enter()
                .append('text')
                .attr('class', 'label')
-               .attr('x', function(d) {return x(d.TotalDeaths)-8;})
-               .attr('y', function(d) {return y(d.country)+20;})
-               .style('text-anchor', 'end')
+               .attr('x', function(d) {return x(d.TotalDeaths)+8;})
+               .attr('y', function(d) {return y(d.country)+10;})
+               .style('text-anchor', 'start')
                .style('fill', '#000000')
+               .style('font-weight','400')
                .html(d => d.country);       
   barrasCountry.transition()
-               .duration(20)
-               .attr('x', function(d) {return x(d.TotalDeaths)-8;})
-               .attr('y', function(d) {return y(d.country)+20;})  
+               .duration(velocidadTransicion)
+               .attr('x', function(d) {return x(d.TotalDeaths)+8;})
+               .attr('y', function(d) {return y(d.country)+10;})  
   barrasCountry.raise()                
   barrasCountry.exit().remove()
 
+  barrasMuertos = g.selectAll('text.label1').data(data, d => d.country)
+  barrasMuertos.enter()
+               .append('text')
+               .attr('class', 'label')
+               .attr('x', function(d) {return x(d.TotalDeaths)+8;})
+               .attr('y', function(d) {return y(d.country)+23;})
+               .style('text-anchor', 'start')
+               .style('fill', '#000000')
+               .style('font-weight','300')
+               .attr('font-size','10')
+               .html(d => d.TotalDeaths);       
+  barrasMuertos.transition()
+               .duration(velocidadTransicion+1200)
+               .attr('x', function(d) {return x(d.TotalDeaths)+8;})
+               .attr('y', function(d) {return y(d.country)+23;})  
+  barrasMuertos.raise()                
+  barrasMuertos.exit().transition().duration(velocidadTransicion).remove()
 
   //console.log("3 Eje Y")
-  yAxisCall = d3.axisLeft(y)
+  /*yAxisCall = d3.axisLeft(y)
                 .ticks(15)               
   yAxisGroup.transition()
-            .duration(500)
-            .call(yAxisCall)
+            .duration(20)
+            .call(yAxisCall)*/
   //console.log("4 - Eje X")
   xAxisCall = d3.axisBottom(x)
   
   console.log("5")
   xAxisGroup
   .transition()
-            .duration(500)
+            .duration(velocidadTransicion)
             .call(xAxisCall)
             .selectAll('text')
             .attr('x', '18px')
@@ -126,12 +170,17 @@ function render(data)
   //console.log("6")
   /****** CAMBIA EL TITULO SEGUN LA METRICA Y AGREGA LOS DATOS RECORDS  */
   titulo.transition()
-        .duration(2000)
+        .duration(velocidadTransicion)
         .attr('x', `${ancho / 2}px`)
         .attr('y', '0px')
         .attr('text-anchor', 'middle')
-        .text('Muertes Acumuladas')
+        .text('Muertes Acumuladas: '+Acumulado)
         .attr('class', 'titulo-grafica') 
+  
+  fecha.transition()
+  .duration(velocidadTransicion)
+  .text(TextoFecha)
+
   //console.log("7")
 
 }
@@ -175,10 +224,11 @@ d3.csv('dataset/covid19World.csv')
     //console.log("timeScale_Max:"+timeScale(sliderMax))  
     slider.attr('min', timeScale.range()[0])
           .attr('max', timeScale.range()[1])
-    slider.node().value = timeScale(filterDate)
+    slider.node().value = timeScale(sliderMin)
     //console.log("sliderNode:"+slider.node().value)    
     dataArray = data    
     frame()
+    interval = d3.interval(() => adelante(), velocidad)
   })
 /*****/
 
@@ -188,11 +238,17 @@ function frame()
   /***** Filtra por dia *****/  
   console.log("Filter");      
   console.log("filterDate:"+filterDate);  
+  console.log("filterDate.getTime():"+filterDate.getTime());  
+  varFilterMin=+filterDate.getTime()-3601000
+  varFilterMax=+filterDate.getTime()+3601000
+  console.log("varFilterMin: "+varFilterMin);  
+  console.log("varFilterMax: "+varFilterMax);  
   dataframe = dataArray.filter(function(d)
   { 
-    return d.date.getTime() === filterDate.getTime() 
+    return d.date.getTime() >= varFilterMin &&  d.date.getTime() <= varFilterMax
   })   
   console.log("Filter:"+dataframe.length);    
+  Acumulado = d3.sum(dataframe, d => d.TotalDeaths)
   /***** Ordena y trae las 15 mas altas *****/  
   console.log("Sort");    
   dataframe = dataframe.sort(function(a,b) 
@@ -207,6 +263,7 @@ function frame()
   });  
   //Definimos el dominio de X y Y
   maxX = d3.max(dataframe, d => d.TotalDeaths)
+  TextoFecha = formatTime(d3.max(dataframe, d => d.date))
   //Definimos el dominio de X y Y
   y.domain(dataframe.map(d => d.country))  
   x.domain([0, maxX])
@@ -222,10 +279,61 @@ slider.on('input', () =>
   console.log("Slider Node INVERTED:"+timeScale.invert(SliderNode));    
   filterDate = timeScale.invert(SliderNode)
   console.log("filterDate:"+filterDate); 
-  filterDate.setHours(0)
+  //filterDate.setHours(0)
   console.log("filterDate_Rounded:"+filterDate); 
   frame()
 })
-    
+
+adelante
  
+botonPausa.on('click', () => 
+{
+  corriendo = !corriendo
+  if (corriendo) 
+  {
+    if (slider.node().value == timeScale(sliderMax))
+      slider.node().value = 0
+    botonPausa
+      .classed('btn-danger', true)
+      .classed('btn-success', false)
+      .html('<i class="fas fa-pause-circle"></i>')
+      interval = d3.interval(() => adelante(), velocidad)
+  } 
+  else 
+  {
+    botonPausa
+      .classed('btn-danger', false)
+      .classed('btn-success', true)
+      .html('<i class="fas fa-play-circle"></i>')
+    interval.stop()
+  }
+})
+
+function adelante() 
+{
+  console.log("adelante:"); 
+  console.log("slider.node().value:"+slider.node().value);
+  console.log("timeScale(sliderMax):"+timeScale(sliderMax)); 
+   if (slider.node().value == timeScale(sliderMax))
+   { 
+    console.log("llego al maximo"); 
+    //filterDate = timeScale.invert(0)
+    corriendo = !corriendo    
+    botonPausa
+      .classed('btn-danger', false)
+      .classed('btn-success', true)
+      .html('<i class="fas fa-play-circle"></i>')    
+    interval.stop()
+   }
+   else
+   {
+     console.log("else"); 
+     varNewFilterDate = +slider.node().value + 1 
+     console.log("varNewFilterDate:"+varNewFilterDate); 
+     filterDate=timeScale.invert(varNewFilterDate)
+     //filterDate.setHours(0)
+     slider.node().value = varNewFilterDate
+   }
+   frame()
+}
 

@@ -22,7 +22,11 @@
   font-weight: bold;
   font-size: 13px;
 }
-
+.ejeY {
+  font-family: 'Bahnschrift SemiBold';
+  font-weight: bold;
+  font-size: 5px;
+}
 .titulo-grafica {
   font-family: 'Bahnschrift SemiBold';
   font-weight: bold;
