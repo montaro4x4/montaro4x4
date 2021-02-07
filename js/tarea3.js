@@ -212,8 +212,8 @@ d3.csv('dataset/covid19World.csv')
     var Difference_In_Time = sliderMax - sliderMin; 
     var Difference_In_Days = Difference_In_Time / (1000 * 3600 * 24);
     //console.log("Difference_In_Days:"+Difference_In_Days)
-    //filterDate = sliderMin
-    filterDate = parseTime("10/21/20")
+    filterDate = sliderMin
+    //filterDate = parseTime("10/21/20")
     timeScale = d3.scaleTime()      
       .domain([sliderMin,sliderMax])
       .range([0,Difference_In_Days]); 
