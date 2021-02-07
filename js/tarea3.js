@@ -79,8 +79,8 @@ var filterDate= parseTime("1/21/20")
 var color = d3.scaleOrdinal(d3.schemeCategory10)
 var interval
 var corriendo=true
-var velocidad=350
-var velocidadTransicion=500
+var velocidad=300
+var velocidadTransicion=300
 var TextoFecha
 var formatTime = d3.timeFormat("%d-%b-%y");
 botonPausa = d3.select('#pausa')
@@ -104,12 +104,6 @@ function render(data)
           .attr('y', function(d) { return y(d.country); })
           .attr('width', function(d) {return x(d.TotalDeaths); } )  
           .attr('fill', function(d) {return color(d.country);})        
-
-
-  //barras.transition().duration(500)
-    //    .style('y', function(d) { return y(d.country); })
-      //  .style('width', function(d) {return x(d.TotalDeaths); } )  
-       // .attr('fill', function(d) {return color(d.country);})
   barras.exit().remove()
        
   barrasCountry = g.selectAll('text.label').data(data, d => d.country)
@@ -121,7 +115,7 @@ function render(data)
                .style('text-anchor', 'start')
                .style('fill', '#000000')
                .style('font-weight','400')
-               .html(d => d.country);       
+               .text(d => d.country);       
   barrasCountry.transition()
                .duration(velocidadTransicion)
                .attr('x', function(d) {return x(d.TotalDeaths)+8;})
@@ -129,23 +123,42 @@ function render(data)
   barrasCountry.raise()                
   barrasCountry.exit().remove()
 
-  barrasMuertos = g.selectAll('text.label1').data(data, d => d.country)
+  barrasMuertos = g.selectAll('text.labelM').data(data, d => d.country)
   barrasMuertos.enter()
                .append('text')
-               .attr('class', 'label')
+               .attr('class', 'labelM')
                .attr('x', function(d) {return x(d.TotalDeaths)+8;})
                .attr('y', function(d) {return y(d.country)+23;})
                .style('text-anchor', 'start')
                .style('fill', '#000000')
                .style('font-weight','300')
                .attr('font-size','10')
-               .html(d => d.TotalDeaths);       
+               .text(d => d.TotalDeaths)       
   barrasMuertos.transition()
-               .duration(velocidadTransicion+1200)
+               .duration(velocidadTransicion)
+               .text(d => d.TotalDeaths) 
                .attr('x', function(d) {return x(d.TotalDeaths)+8;})
                .attr('y', function(d) {return y(d.country)+23;})  
   barrasMuertos.raise()                
-  barrasMuertos.exit().transition().duration(velocidadTransicion).remove()
+  barrasMuertos.exit().remove()
+
+  /*barrasMuertos = g.selectAll('text.label1').data(data, d => d.TotalDeaths)
+  barrasMuertos.enter()
+               .append('text')
+                .attr('class', 'label1')
+                .attr('x', function(d) {return x(d.TotalDeaths)+8;})
+                .attr('y', function(d) {return y(d.country)+23;})
+                .style('text-anchor', 'start')
+                .style('fill', '#000000')
+                .style('font-weight','300')
+                .attr('font-size','10')
+                .html(d => d.TotalDeaths)    
+               .transition()
+                .duration(velocidadTransicion)
+                .attr('x', function(d) {return x(d.TotalDeaths)+8;})
+                .attr('y', function(d) {return y(d.country)+23;})  
+  barrasMuertos.raise()                
+  barrasMuertos.exit().remove()*/
 
   //console.log("3 Eje Y")
   /*yAxisCall = d3.axisLeft(y)
@@ -157,8 +170,7 @@ function render(data)
   xAxisCall = d3.axisBottom(x)
   
   console.log("5")
-  xAxisGroup
-  .transition()
+  xAxisGroup.transition()
             .duration(velocidadTransicion)
             .call(xAxisCall)
             .selectAll('text')
