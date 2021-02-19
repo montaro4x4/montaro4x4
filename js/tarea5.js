@@ -1,14 +1,14 @@
-//Creacion del la grafica
+//Creacion del las 2 grafica
 graf = d3.select('#grafBoxPlot')
 grafLine = d3.select('#grafLine')
 
 //Calcula el ancho de la ventana cortando el px con el slice del valor ejemplo 1000px > 1000
 ancho_total = graf.style('width').slice(0, -2)
 alto_total = ancho_total * 2
-
 anchoTotalLine = grafLine.style('width').slice(0, -2)
 altoTotalLine = alto_total
-// Configuracion el ancho y Largo del graf 
+
+// Configuracion el ancho y Largo del los grafs
 graf.style('width', `${ ancho_total }px`)
     .style('height', `${ alto_total }px`)
 
@@ -23,11 +23,8 @@ ancho = ancho_total - margen.izquierdo - margen.derecho
 alto  = alto_total - margen.superior - margen.inferior
 anchoLine = anchoTotalLine - margen.izquierdo - margen.derecho
 altoLine  = altoTotalLine - margen.superior - margen.inferior
-console.log("ancho:"+ancho)
-console.log("alto:"+alto)
-console.log("anchoLine:"+anchoLine)
-console.log("altoLine:"+altoLine)
-// Configurar ancho y alto del SVG que es igual al graf
+
+// Configurar ancho y alto del SVGs que es igual al grafs
 svg = graf.append('svg')
           .style('width', `${ ancho_total }px`)
           .style('height', `${ alto_total }px`)
@@ -44,16 +41,11 @@ gLine = svgLine.append('g')
        .attr('transform', `translate(${ margen.izquierdo }, ${ margen.superior })`)
        .attr('width', anchoLine + 'px')
        .attr('height', altoLine + 'px')
-// Declarar escalador lineal como variable global para re dibujar segun estadistica seleccionada       
-//x = d3.scaleLinear().range([0,ancho-70])
+
+// Declarar escalador para bandas y lineal 
 x = d3.scaleBand().range([0, anchoLine]).paddingInner(-0.3).paddingOuter(0.3) 
-
-// Declarar escalador para bandas como variable global para re dibujar segun estadistica seleccionada configurado a -0.3 de ancho para que sea mas grafica de area 
 y = d3.scaleLinear().range([alto,0])
-//      .paddingInner(0.3)
-//      .paddingOuter(0.3) 
 
-var timeScale
 // Declaracion de los ejes X y Y globales para ser redibujados 
 xAxisGroupLine = gLine.append('g')
               .attr('transform', `translate(0, ${ alto })`)
@@ -69,28 +61,14 @@ yAxisGroupLine = gLine.append('g')
 /******** TITULOS Y ETIQUETAS *************/            
 titulo = g.append('text').attr('x', `${ancho / 2}px`).attr('y', '-5px').attr('text-anchor', 'middle').text('Muertes Diarias')
 tituloLine = gLine.append('text').attr('x', `${anchoLine / 2}px`).attr('y', '-5px').attr('text-anchor', 'middle').text('Muertes Diarias')
-//fecha = g.append('text').attr('x', `${ancho -(ancho / 3)}px`).attr('y',`${alto - 40}px`).attr('text-anchor', 'start').attr('fill','#cccccc').attr('font-size','60').text('')
-
           
 //Declaracion de Variables Globales    
-//Declara metrica Inicial 
 pais = 'Mexico'
 paisSelect = d3.select('#paisSelect')
-var listaPaises =[]
+listaPaises =[]
 dataArray = []
 valoresTickX=[]
-maxY=0
-maxX=0
-var sliderMax
-var sliderMin
-var parseTime = d3.timeParse("%m/%d/%y")
-var filterDate= parseTime("1/21/20")
-var color = d3.scaleOrdinal(d3.schemeCategory10)
-var interval
-var corriendo=true
-var velocidadTransicion=4000
-var TextoFecha
-var formatTime = d3.timeFormat("%d-%b-%y");
+velocidadTransicion=4000
 
 /***** Funcion para hacer el render de la grafica *****/
 function render(data) 
@@ -362,10 +340,6 @@ function render(data)
                         return varMes +'-'+varDia[2]
                       })                                       
   xAxisGroupLine.transition().duration(velocidadTransicion).call(xAxisCallLine)
-
-
-
-
   }   
 /*****/
 
