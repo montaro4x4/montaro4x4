@@ -230,7 +230,7 @@ d3.csv('dataset/covid19Mexico.csv')
         {
           //console.log("Entro")
           valoresTickX.push(d.date)
-          //console.log(valoresTickX)
+          console.log(valoresTickX)
         }
         /*****/
         
@@ -257,6 +257,7 @@ function frame()
 /***** Se ejecuta cuando cambia el select box *****/
 metricaSelect.on('change', () => 
 {
+  console.log("Chnage Pais") 
   metrica = metricaSelect.node().value
   frame()
 })
